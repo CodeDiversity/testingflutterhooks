@@ -21,22 +21,32 @@ class MyApp extends StatelessWidget {
   }
 }
 
-Stream<String> getTime() {
-  return Stream.periodic(
-    const Duration(seconds: 5),
-    (i) => DateTime.now().toString(),
-  );
-}
-
 class MyHomePage extends HookWidget {
   const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final dateTime = useStream(getTime());
+    final controller = useTextEditingController();
+    final text = useState('');
+    useEffect(() {
+      controller.addListener(
+        () {
+          text.value = controller.text;
+        },
+      );
+      return null;
+    }, [controller]);
     return Scaffold(
       appBar: AppBar(
-        title: Text(dateTime.data ?? 'Loading...'),
+        title: const Text('Flutter Demo Home Page'),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: controller,
+          ),
+          Text('You typed: ${text.value}'),
+        ],
       ),
     );
   }
